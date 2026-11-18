@@ -1,0 +1,246 @@
+<section class="approval-lab" data-approval-lab aria-labelledby="approval-lab-title">
+  <div class="approval-head">
+    <div>
+      <p class="eyebrow">Story approvals</p>
+      <h2 id="approval-lab-title" class="approval-title">Who gets the next review request?</h2>
+    </div>
+    <span class="badge badge--schematic">Fictional Example</span>
+  </div>
+
+  <div class="steps-row" aria-live="polite">
+    <div class="step-card is-done" data-step-card="1">
+      <span class="mono step-num">STEP 01 · EDITORIAL LEAD</span>
+      <strong class="step-state" data-step-state="1">Approved ✓</strong>
+      <span class="mono step-alert" data-step-alert="1">Completed</span>
+    </div>
+    <div class="step-card is-active" data-step-card="2">
+      <span class="mono step-num">STEP 02 · COMPLIANCE REVIEWER</span>
+      <strong class="step-state" data-step-state="2">Active · Awaiting Review</strong>
+      <span class="mono step-alert" data-step-alert="2">Customer.io alert sent ✓</span>
+    </div>
+    <div class="step-card" data-step-card="3">
+      <span class="mono step-num">STEP 03 · EXEC SIGN-OFF</span>
+      <strong class="step-state" data-step-state="3">Locked until Step 02</strong>
+      <span class="mono step-alert" data-step-alert="3">Alert held</span>
+    </div>
+  </div>
+
+  <p data-demo-controls hidden>Try approving the final step early. Then approve the active step and see which reviewer gets notified.</p>
+  <div class="approval-actions" data-demo-controls hidden>
+    <button type="button" class="app-btn app-btn--primary" data-approve-active>
+      Approve active step (Valid role)
+    </button>
+    <button type="button" class="app-btn" data-try-skip>
+      Attempt Step 03 out of order
+    </button>
+    <button type="button" class="app-btn mono" data-reset-steps>
+      Reset sequence
+    </button>
+  </div>
+
+  <p class="approval-log mono" data-approval-log role="status">
+    API STATE: Step 01 complete → Step 02 unlocked &amp; assigned reviewer notified via Customer.io. Step 03 remains locked.
+  </p>
+</section>
+
+<script>
+  const aLab = document.querySelector<HTMLElement>('[data-approval-lab]');
+  if (aLab) {
+    const approveBtn = aLab.querySelector<HTMLButtonElement>('[data-approve-active]');
+    const skipBtn = aLab.querySelector<HTMLButtonElement>('[data-try-skip]');
+    const resetBtn = aLab.querySelector<HTMLButtonElement>('[data-reset-steps]');
+    const log = aLab.querySelector<HTMLElement>('[data-approval-log]');
+
+    let currentStep = 2; // 2 = Step 2 active, 3 = Step 3 active, 4 = Published
+
+    const updateUI = (customMessage?: string) => {
+      for (let i = 1; i <= 3; i++) {
+        const card = aLab.querySelector<HTMLElement>(`[data-step-card="${i}"]`);
+        const st = aLab.querySelector<HTMLElement>(`[data-step-state="${i}"]`);
+        const al = aLab.querySelector<HTMLElement>(`[data-step-alert="${i}"]`);
+        if (!card || !st || !al) continue;
+
+        card.classList.remove('is-done', 'is-active', 'is-blocked');
+        if (i < currentStep) {
+          card.classList.add('is-done');
+          st.textContent = 'Approved ✓';
+          al.textContent = 'Completed';
+        } else if (i === currentStep) {
+          card.classList.add('is-active');
+          st.textContent = 'Active · Awaiting Review';
+          al.textContent = 'Customer.io alert sent ✓';
+        } else {
+          st.textContent = `Locked until Step 0${i - 1}`;
+          al.textContent = 'Alert held';
+        }
+      }
+
+      if (approveBtn) {
+        approveBtn.disabled = currentStep > 3;
+        approveBtn.textContent =
+          currentStep > 3 ? 'All 3 steps approved ✓' : `Approve Step 0${currentStep} (Valid role)`;
+      }
+      if (skipBtn) skipBtn.disabled = currentStep >= 3;
+
+      if (log) {
+        if (customMessage) {
+          log.textContent = customMessage;
+        } else if (currentStep === 2) {
+          log.textContent =
+            'API STATE: Step 01 complete → Step 02 unlocked & assigned reviewer notified via Customer.io.';
+        } else if (currentStep === 3) {
+          log.textContent =
+            'API STATE: Step 02 approved → Step 03 unlocked & Exec Sign-Off notified via Customer.io.';
+        } else {
+          log.textContent =
+            'API STATE: All ordered review steps complete → Story ready for publication.';
+        }
+      }
+    };
+
+    approveBtn?.addEventListener('click', () => {
+      if (currentStep <= 3) {
+        currentStep += 1;
+        updateUI();
+      }
+    });
+
+    skipBtn?.addEventListener('click', () => {
+      if (currentStep < 3) {
+        const step3 = aLab.querySelector<HTMLElement>('[data-step-card="3"]');
+        step3?.classList.add('is-blocked');
+        if (log) {
+          log.textContent =
+            'HTTP 409 REJECTED: Cannot approve Step 03 while Step 02 is still pending. No duplicate or premature Customer.io alert sent.';
+        }
+      } else {
+        if (log) {
+          log.textContent = 'INFO: Step 02 is already complete, so Step 03 is now legitimately unlocked.';
+        }
+      }
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      currentStep = 2;
+      updateUI();
+    });
+    aLab.querySelectorAll('[data-demo-controls]').forEach((el) => el.removeAttribute('hidden'));
+  }
+</script>
+
+<style>
+  .approval-lab {
+    margin-block: 2rem;
+    padding: 1.4rem;
+    background: var(--surface-paper);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+  }
+
+  .approval-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .approval-title {
+    margin: 0.25rem 0 0;
+    font-size: 1.2rem;
+  }
+
+  .steps-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-card {
+    padding: 0.9rem;
+    border-radius: 10px;
+    background: var(--bg-ivory);
+    border: 1.5px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .step-card.is-done {
+    background: var(--teal-soft);
+    border-color: var(--teal);
+  }
+
+  .step-card.is-active {
+    background: var(--surface-paper);
+    border: 2px solid var(--ink);
+  }
+
+  .step-card.is-blocked {
+    border: 2px solid #B91C1C;
+    background: #FEF2F2;
+  }
+
+  .step-num {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+  }
+
+  .step-state {
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  .step-alert {
+    font-size: 0.72rem;
+    color: var(--teal);
+  }
+
+  .approval-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .app-btn {
+    font-family: var(--font-sans);
+    font-size: 0.84rem;
+    font-weight: 600;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-subtle);
+    background: var(--bg-ivory);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .app-btn--primary {
+    background: var(--teal);
+    color: var(--surface-paper);
+    border-color: var(--teal);
+  }
+
+  .app-btn--primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .approval-log {
+    margin: 0;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    background: var(--console-bg);
+    color: var(--signal-mint);
+    font-size: 0.77rem;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 720px) {
+    .steps-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

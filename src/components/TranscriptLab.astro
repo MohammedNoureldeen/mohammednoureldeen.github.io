@@ -1,0 +1,220 @@
+<section class="transcript-lab" data-transcript-lab aria-labelledby="transcript-lab-title">
+  <div class="lab-head">
+    <div>
+      <p class="eyebrow">Transcript correction</p>
+      <h2 id="transcript-lab-title" class="lab-title">How do you fix a glossary term without moving a word in time?</h2>
+    </div>
+    <span class="badge badge--schematic">Fictional Example</span>
+  </div>
+
+  <p data-demo-controls hidden>Compare both occurrences of “spoken.” Switch states and watch which word changes and which times stay fixed.</p>
+  <div class="lab-controls" role="group" aria-label="Transcript pipeline state" data-demo-controls hidden>
+    <button type="button" class="lab-btn" data-t-mode="raw" aria-pressed="false">
+      Original
+    </button>
+    <button type="button" class="lab-btn is-active" data-t-mode="corrected" aria-pressed="true">
+      Corrected
+    </button>
+    <button type="button" class="lab-btn" data-t-mode="failure" aria-pressed="false">
+      If AI fails
+    </button>
+  </div>
+
+  <div class="tokens-panel" aria-live="polite">
+    <p class="mono glossary-rule">
+      CUSTOM GLOSSARY ENTRY: <strong>"Spokn"</strong> (Product noun — do not alter ordinary verb "spoken")
+    </p>
+
+    <div class="sentence-flow">
+      <span>“We recorded our team update on</span>
+
+      <span class="timed-token is-patched" data-token-one>
+        <span class="token-word" data-word-one>Spokn</span>
+        <span class="mono token-ts">[00:04.12 – 00:04.58]</span>
+      </span>
+
+      <span>right after we had</span>
+
+      <span class="timed-token" data-token-two>
+        <span class="token-word" data-word-two>spoken</span>
+        <span class="mono token-ts">[00:06.80 – 00:07.24]</span>
+      </span>
+
+      <span>with engineering.”</span>
+    </div>
+
+    <p class="lab-status" data-t-status>
+      <strong>State — Context-Aware Glossary Patch:</strong> Occurrence 1 updates from <code class="mono">"spoken"</code> → <code class="mono">"Spokn"</code> (product noun), Occurrence 2 stays <code class="mono">"spoken"</code> (ordinary verb), and both word timecodes (<code class="mono">00:04.12–00:04.58</code> and <code class="mono">00:06.80–00:07.24</code>) remain 100% unchanged.
+    </p>
+  </div>
+</section>
+
+<script>
+  const tLab = document.querySelector<HTMLElement>('[data-transcript-lab]');
+  if (tLab) {
+    const btns = tLab.querySelectorAll<HTMLButtonElement>('[data-t-mode]');
+    const wordOne = tLab.querySelector<HTMLElement>('[data-word-one]');
+    const tokenOne = tLab.querySelector<HTMLElement>('[data-token-one]');
+    const status = tLab.querySelector<HTMLElement>('[data-t-status]');
+
+    const states: Record<string, { w1: string; patched: boolean; fallback: boolean; note: string }> = {
+      raw: {
+        w1: 'spoken',
+        patched: false,
+        fallback: false,
+        note: '<strong>State — Raw ASR Output:</strong> Speech-to-text transcribes both occurrences as lowercase <code class="mono">"spoken"</code>. A naive find-and-replace would corrupt the second verb; a freeform LLM rewrite could shift timestamps.',
+      },
+      corrected: {
+        w1: 'Spokn',
+        patched: true,
+        fallback: false,
+        note: '<strong>State — Context-Aware Glossary Patch:</strong> Occurrence 1 updates to <code class="mono">"Spokn"</code> (product context), Occurrence 2 stays <code class="mono">"spoken"</code> (verb context), and both start/end timestamps stay strictly locked.',
+      },
+      failure: {
+        w1: 'spoken',
+        patched: false,
+        fallback: true,
+        note: '<strong>State — Simulated OpenAI Timeout / Error:</strong> When the external model call fails, the pipeline retains the original unmodified text (<code class="mono">"spoken"</code>) and exact word timings so editing is never blocked.',
+      },
+    };
+
+    btns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.tMode || 'corrected';
+        const st = states[mode];
+        if (!st) return;
+
+        btns.forEach((b) => {
+          const active = b === btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-pressed', String(active));
+        });
+
+        if (wordOne) wordOne.textContent = st.w1;
+        if (tokenOne) {
+          tokenOne.classList.toggle('is-patched', st.patched);
+          tokenOne.classList.toggle('is-fallback', st.fallback);
+        }
+        if (status) status.innerHTML = st.note;
+      });
+    });
+    tLab.querySelectorAll('[data-demo-controls]').forEach((el) => el.removeAttribute('hidden'));
+  }
+</script>
+
+<style>
+  .transcript-lab {
+    margin-block: 2rem;
+    padding: 1.4rem;
+    background: var(--surface-paper);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+  }
+
+  .lab-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .lab-title {
+    margin: 0.25rem 0 0;
+    font-size: 1.2rem;
+  }
+
+  .lab-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .lab-btn {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-subtle);
+    background: var(--bg-ivory);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .lab-btn.is-active {
+    background: var(--teal);
+    color: var(--surface-paper);
+    border-color: var(--teal);
+  }
+
+  .tokens-panel {
+    background: var(--bg-ivory);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1.15rem;
+  }
+
+  .glossary-rule {
+    margin: 0 0 0.9rem;
+    font-size: 0.76rem;
+    color: var(--ink-muted);
+  }
+
+  .sentence-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 1.08rem;
+    padding-block: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .timed-token {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.3rem 0.65rem;
+    border-radius: 8px;
+    background: var(--surface-paper);
+    border: 1.5px solid var(--border-subtle);
+  }
+
+  .timed-token.is-patched {
+    background: var(--teal-soft);
+    border-color: var(--teal);
+  }
+
+  .timed-token.is-fallback {
+    border-style: dashed;
+    border-color: var(--ink);
+  }
+
+  .token-word {
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .timed-token.is-patched .token-word {
+    color: var(--teal);
+  }
+
+  .token-ts {
+    font-size: 0.68rem;
+    color: var(--ink-muted);
+  }
+
+  .lab-status {
+    margin: 0.9rem 0 0;
+    font-size: 0.92rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+
+  .lab-status :global(strong) {
+    color: var(--ink);
+  }
+</style>

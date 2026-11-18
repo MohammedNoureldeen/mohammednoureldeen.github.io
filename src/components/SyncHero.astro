@@ -1,0 +1,749 @@
+---
+import { SITE_META } from '../data/portfolio';
+---
+
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="container hero-grid">
+    <!-- Left Column: Immediate Recruiter Clarity (Zero Demo Interaction Needed) -->
+    <div class="hero-intro">
+      <p class="badge">
+        <span class="status-dot" aria-hidden="true"></span>
+        {SITE_META.location} · Spokn · Video, Backend &amp; AI
+      </p>
+
+      <h1 id="hero-heading" class="hero-name">
+        {SITE_META.name}
+        <span class="hero-role">{SITE_META.role}</span>
+      </h1>
+
+      <p class="hero-lead">{SITE_META.heroLead}</p>
+
+      <div class="hero-actions">
+        <a href="#work" class="btn btn--primary">
+          View selected work
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 3v10M8 13l-4-4M8 13l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+        <a
+          href={SITE_META.cvUrl}
+          download="Mohamed_Ali_Rafat_CV.pdf"
+          class="btn btn--secondary"
+        >
+          Download CV (PDF)
+        </a>
+        <a class="mobile-case" href="/work/audio-video-sync/">Read the sync case →</a>
+      </div>
+
+      <div class="direct-routes" aria-label="Direct case study links">
+        <p class="mono routes-heading">Case studies</p>
+        <ul class="routes-list">
+          <li>
+            <a href="/work/audio-video-sync/">
+              <span class="mono route-num">01</span> Keeping audio and video in sync
+            </a>
+          </li>
+          <li>
+            <a href="/work/transcript-timing-correction/">
+              <span class="mono route-num">02</span> Correcting transcripts while preserving timing
+            </a>
+          </li>
+          <li>
+            <a href="/work/ordered-story-approvals/">
+              <span class="mono route-num">03</span> Building an ordered story approval workflow
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Right Column: Cutout Cartoon Mohamed + Dark Studio NLE Sync Console -->
+    <div class="sync-stage" data-sync-stage data-state="drift">
+      <div class="character-lane">
+        <p class="speech-pill mono" data-character-bubble>
+          “Spot the +120 ms lag? Let’s align it →”
+        </p>
+        <div class="character-frame">
+          <img
+            src="/images/mohamed-welcoming.webp"
+            alt="Illustrated 2D cartoon of Mohamed Ali Rafat in round glasses and a deep teal overshirt waving warmly"
+            width="260"
+            height="330"
+            fetchpriority="high"
+            decoding="async"
+            class="pose-img is-active"
+            data-pose="welcoming"
+          />
+
+        </div>
+      </div>
+
+      <!-- Dark Studio NLE Sync Console -->
+      <div class="sync-console" role="region" aria-label="Interactive illustration of the flash-and-beep synchronization testing principle">
+        <div class="console-topbar">
+          <div class="console-title-wrap">
+            <span class="console-leds" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </span>
+            <span class="mono console-title">SYNC-BENCH · SILENT SCHEMATIC</span>
+          </div>
+          <div class="console-controls" data-demo-controls hidden>
+            <button
+              type="button"
+              class="console-btn console-btn--primary"
+              data-sync-toggle
+              aria-pressed="false"
+            >
+              Show the timing fix
+            </button>
+            <button
+              type="button"
+              class="console-btn console-btn--ghost mono"
+              data-sync-scrub
+              aria-label="Replay silent timeline playhead"
+            >
+              Replay
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Plain-Text State Readout (Screen-Reader & Reduced-Motion Friendly) -->
+        <div class="console-telemetry" aria-live="polite" data-sync-readout>
+          <span class="mono telemetry-pts">Target time 00:01:12.00</span>
+          <span class="mono telemetry-badge" data-sync-badge>
+            Sound is 120 ms late
+          </span>
+        </div>
+
+        <!-- Dual Track Monitor -->
+        <div class="timeline-tracks">
+          <div class="scrub-playhead" data-playhead aria-hidden="true"></div>
+
+          <!-- Track V1: Picture Cue -->
+          <div class="track-row">
+            <div class="track-meta">
+              <span class="mono track-id">V1 · PICTURE</span>
+              <span class="track-sub">1-frame white flash</span>
+            </div>
+            <div class="track-lane">
+              <div class="cue-marker cue-marker--flash" style="left: 46%;">
+                <span class="mono">⚡</span>
+              </div>
+            </div>
+            <span class="mono cue-label cue-label--mint">00:01:12.00</span>
+          </div>
+
+          <!-- Track A1: Sound Cue -->
+          <div class="track-row">
+            <div class="track-meta">
+              <span class="mono track-id">A1 · SOUND</span>
+              <span class="track-sub">1 kHz sine beep</span>
+            </div>
+            <div class="track-lane">
+              <div class="cue-ghost" style="left: 72%;" aria-hidden="true"></div>
+              <div class="cue-marker cue-marker--beep" data-beep-marker style="left: 72%;">
+                <span class="mono">♪</span>
+              </div>
+            </div>
+            <span class="mono cue-label cue-label--amber" data-beep-label>00:01:12.12 (+120 ms)</span>
+          </div>
+        </div>
+
+        <!-- Static Equivalent Explanation of Both States (Works without JS & Clarifies Principle) -->
+        <div class="console-states-text">
+          <p class="state-line" data-state-summary>
+            In this example the flash lands at <code class="mono">00:01:12.00</code>. The beep follows 120 ms later. Align the tracks and the two cues land together.
+          </p>
+          <p class="console-disclaimer">
+            Illustrative timings. The real test compares the flash and beep in the exported file.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const stage = document.querySelector<HTMLElement>('[data-sync-stage]');
+  if (stage) {
+    const toggleBtn = stage.querySelector<HTMLButtonElement>('[data-sync-toggle]');
+    const scrubBtn = stage.querySelector<HTMLButtonElement>('[data-sync-scrub]');
+    const badge = stage.querySelector<HTMLElement>('[data-sync-badge]');
+    const beepMarker = stage.querySelector<HTMLElement>('[data-beep-marker]');
+    const beepLabel = stage.querySelector<HTMLElement>('[data-beep-label]');
+    const bubble = stage.querySelector<HTMLElement>('[data-character-bubble]');
+    const playhead = stage.querySelector<HTMLElement>('[data-playhead]');
+    const portrait = stage.querySelector<HTMLImageElement>('[data-pose]');
+    const caption = stage.querySelector<HTMLElement>('.state-line');
+
+    let isSynced = false;
+
+    const setPose = (targetPose: 'welcoming' | 'focused' | 'explaining') => {
+      if (!portrait || portrait.dataset.pose === targetPose) return;
+      portrait.src = `/images/mohamed-${targetPose}.webp`;
+      portrait.alt = targetPose === 'explaining'
+        ? 'Mohamed pointing to the aligned sound and picture markers'
+        : 'Mohamed inspecting the timeline';
+      portrait.dataset.pose = targetPose;
+    };
+
+    const triggerScrub = () => {
+      if (!playhead) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      playhead.classList.remove('is-running');
+      void playhead.offsetWidth;
+      playhead.classList.add('is-running');
+    };
+
+    const renderState = () => {
+      stage.dataset.state = isSynced ? 'synced' : 'drift';
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', String(isSynced));
+        toggleBtn.textContent = isSynced ? 'Inspect +120 ms drift' : 'Show the timing fix';
+      }
+      if (badge) {
+        badge.textContent = isSynced
+          ? 'Sound and picture align'
+          : 'Sound is 120 ms late';
+      }
+      if (caption) {
+        caption.textContent = isSynced
+          ? 'The flash and beep both land at 00:01:12.00. The offset is now 0 ms.'
+          : 'The flash lands at 00:01:12.00. The beep follows 120 ms later.';
+      }
+      if (beepMarker) {
+        beepMarker.style.left = isSynced ? '46%' : '72%';
+      }
+      if (beepLabel) {
+        beepLabel.textContent = isSynced ? '00:01:12.00 (Locked)' : '00:01:12.12 (+120 ms)';
+      }
+      if (bubble) {
+        bubble.textContent = isSynced
+          ? '“Both cues land together.”'
+          : '“Audio trails by +120 ms — click to fix →”';
+      }
+      setPose(isSynced ? 'explaining' : 'focused');
+    };
+
+    toggleBtn?.addEventListener('click', () => {
+      isSynced = !isSynced;
+      renderState();
+      triggerScrub();
+    });
+
+    scrubBtn?.addEventListener('click', () => {
+      if (!isSynced && stage.dataset.state === 'drift') {
+        setPose('focused');
+      }
+      triggerScrub();
+    });
+    stage.querySelector<HTMLElement>('[data-demo-controls]')?.removeAttribute('hidden');
+  }
+</script>
+
+<style>
+  .hero {
+    padding-block: clamp(2.25rem, 5vw, 4.25rem) clamp(3rem, 5.5vw, 4.75rem);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: clamp(2rem, 3.5vw, 3rem);
+    align-items: center;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--teal);
+  }
+
+  .hero-name {
+    font-size: clamp(2.2rem, 4.2vw, 3.15rem);
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+    margin: 0.85rem 0 0.9rem;
+    color: var(--ink);
+  }
+
+  .hero-role {
+    display: block;
+    font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+    font-weight: 600;
+    color: var(--teal);
+    margin-top: 0.3rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-lead {
+    font-size: clamp(1.04rem, 1.4vw, 1.16rem);
+    line-height: 1.62;
+    color: var(--ink);
+    margin: 0 0 1.6rem;
+    max-width: 34rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .direct-routes {
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .routes-heading {
+    font-size: 0.73rem;
+    color: var(--ink-muted);
+    margin: 0 0 0.55rem;
+    letter-spacing: 0.04em;
+  }
+
+  .routes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.42rem;
+  }
+
+  .routes-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.92rem;
+  }
+
+  .routes-list a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .routes-list a:hover {
+    text-decoration: underline;
+  }
+
+  .route-num {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    margin-right: 0.3rem;
+  }
+
+  .mobile-case { display: none; }
+
+  /* Right Stage: Cutout Cartoon + Dark Console */
+  .sync-stage {
+    display: grid;
+    grid-template-columns: 215px minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: end;
+  }
+
+  .character-lane {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .speech-pill {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    text-align: center;
+    padding: 0.42rem 0.7rem;
+    border-radius: 12px;
+    background: var(--surface-paper);
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+  }
+
+  .character-frame {
+    position: relative;
+    width: 215px;
+    aspect-ratio: 260 / 330;
+    border-bottom: 2px solid var(--border-subtle);
+  }
+
+  .pose-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+  }
+
+  .pose-img.is-active {
+    opacity: 1;
+  }
+
+  /* Dark Studio NLE Console */
+  .sync-console {
+    background: var(--console-bg);
+    color: var(--console-text);
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 14px 32px rgba(24, 29, 26, 0.12);
+  }
+
+  .console-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--console-border);
+  }
+
+  .console-title-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .console-leds {
+    display: inline-flex;
+    gap: 5px;
+  }
+
+  .console-leds i {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    display: block;
+  }
+
+  .console-leds i:nth-child(1) { background: #EF4444; }
+  .console-leds i:nth-child(2) { background: var(--signal-amber); }
+  .console-leds i:nth-child(3) { background: var(--signal-mint); }
+
+  .console-title {
+    font-size: 0.73rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--console-text);
+  }
+
+  .console-controls {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .console-btn {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.44rem 0.8rem;
+    border-radius: 7px;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: background-color 140ms ease, border-color 140ms ease;
+  }
+
+  .console-btn:focus-visible {
+    outline: 3px solid var(--signal-mint);
+    outline-offset: 2px;
+  }
+
+  .console-btn--primary {
+    background: var(--teal);
+    color: var(--surface-paper);
+    border-color: var(--signal-mint);
+  }
+
+  .console-btn--primary:hover {
+    background: var(--teal-hover);
+  }
+
+  .console-btn--ghost {
+    background: var(--console-card);
+    color: var(--console-text);
+    border-color: var(--console-border);
+    font-size: 0.75rem;
+  }
+
+  .console-btn--ghost:hover {
+    border-color: var(--console-muted);
+  }
+
+  .console-telemetry {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-block: 0.65rem;
+    font-size: 0.74rem;
+  }
+
+  .telemetry-pts {
+    color: var(--signal-mint);
+  }
+
+  .telemetry-badge {
+    font-size: .9rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: var(--signal-amber-bg);
+    color: var(--signal-amber);
+    border: 1px solid rgba(251, 191, 36, 0.45);
+    font-weight: 600;
+  }
+
+  .sync-stage[data-state='synced'] .telemetry-badge {
+    background: var(--signal-mint-bg);
+    color: var(--signal-mint);
+    border-color: rgba(45, 212, 191, 0.45);
+  }
+
+  .timeline-tracks {
+    position: relative;
+    display: grid;
+    gap: 0.6rem;
+    padding-block: 0.35rem;
+  }
+
+  .track-lane::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 46%;
+    width: 2px;
+    background: rgba(45, 212, 191, 0.38);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .scrub-playhead {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 112px;
+    width: 2px;
+    background: #FFFFFF;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .scrub-playhead.is-running {
+    animation: scrubAcross 720ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes scrubAcross {
+    0% {
+      left: 114px;
+      opacity: 0.95;
+    }
+    85% {
+      left: calc(100% - 14px);
+      opacity: 0.95;
+    }
+    100% {
+      left: calc(100% - 14px);
+      opacity: 0;
+    }
+  }
+
+  .track-row {
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: center;
+    background: var(--console-card);
+    border: 1px solid var(--console-border);
+    border-radius: 10px;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .track-meta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .track-id {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--console-text);
+  }
+
+  .track-sub {
+    font-size: 0.8rem;
+    color: var(--console-muted);
+  }
+
+  .track-lane {
+    position: relative;
+    height: 36px;
+    background: var(--console-bg);
+    border-radius: 7px;
+    border: 1px solid var(--console-border);
+    overflow: hidden;
+  }
+
+  .cue-marker {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    width: 24px;
+    margin-left: -12px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    z-index: 2;
+    transition: left 420ms cubic-bezier(0.22, 1, 0.36, 1), background-color 220ms ease;
+  }
+
+  .cue-marker--flash {
+    background: var(--signal-mint);
+    color: var(--console-bg);
+  }
+
+  .cue-marker--beep {
+    background: var(--signal-amber);
+    color: var(--console-bg);
+  }
+
+  .sync-stage[data-state='synced'] .cue-marker--beep {
+    background: var(--signal-mint);
+  }
+
+  .cue-ghost {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    width: 24px;
+    margin-left: -12px;
+    border-radius: 5px;
+    border: 1.5px dashed var(--console-muted);
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+
+  .sync-stage[data-state='synced'] .cue-ghost {
+    opacity: 0.45;
+  }
+
+  .cue-label {
+    grid-column: 1 / -1;
+    text-align: right;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    transition: color 220ms ease;
+  }
+
+  .cue-label--mint {
+    color: var(--signal-mint);
+  }
+
+  .cue-label--amber {
+    color: var(--signal-amber);
+  }
+
+  .sync-stage[data-state='synced'] .cue-label--amber {
+    color: var(--signal-mint);
+  }
+
+  .console-states-text {
+    margin-top: 0.75rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--console-border);
+    font-size: 0.78rem;
+    line-height: 1.48;
+    color: var(--console-muted);
+  }
+
+  .state-line {
+    margin: 0 0 0.45rem;
+  }
+
+  .state-line strong,
+  .console-disclaimer strong {
+    color: var(--console-text);
+  }
+
+  .state-line code {
+    color: var(--signal-mint);
+    font-size: 0.74rem;
+  }
+
+  .console-disclaimer {
+    margin: 0;
+    font-size: 0.8rem;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 1060px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .sync-stage {
+      grid-template-columns: 190px minmax(0, 1fr);
+    }
+
+    .character-frame {
+      width: 190px;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .hero { padding-block: 1.3rem 2rem; }
+    .hero-grid { gap: 1rem; }
+    .hero-actions { align-items: center; margin: 0; }
+    .mobile-case { display: inline-block; font-weight: 600; }
+    .hero-actions .btn--secondary, .direct-routes { display: none; }
+    .hero-lead { margin-bottom: 1rem; }
+
+    .sync-stage {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+
+    .character-lane {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: 0.9rem;
+    }
+
+    .character-frame {
+      width: 76px;
+      flex-shrink: 0;
+    }
+
+    .speech-pill {
+      order: 2;
+      text-align: left;
+      max-width: 14rem;
+    }
+
+    .sync-console {
+      width: 100%;
+    }
+
+    .track-row {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+  }
+</style>

@@ -1,0 +1,259 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CharacterCallout from '../../components/CharacterCallout.astro';
+import HlsPipelineDiagram from '../../components/HlsPipelineDiagram.astro';
+import TranscriptLab from '../../components/TranscriptLab.astro';
+import ApprovalStepper from '../../components/ApprovalStepper.astro';
+import { SITE_META } from '../../data/portfolio';
+
+export async function getStaticPaths() {
+  const allCases = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+  return allCases.map((entry, idx) => ({
+    params: { slug: entry.data.slugId },
+    props: {
+      entry,
+      nextEntry: allCases[(idx + 1) % allCases.length],
+    },
+  }));
+}
+
+const { entry, nextEntry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const pageTitle = `${d.title} — Case Study · Mohamed Ali Rafat`;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={d.subtitle}
+  ogImage={d.ogImage}
+  canonicalPath={`/work/${d.slugId}/`}
+>
+  <article class="case-page">
+    <header class="case-hero">
+      <div class="container case-hero-inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="/#work">← Back to Selected Work</a>
+          <span class="mono" aria-hidden="true">/</span>
+          <span class="mono">Case Study 0{d.order}</span>
+        </nav>
+
+        <div class="badge-row">
+          <span class="badge">{d.evidenceBadge} ({d.period})</span>
+          <span class="badge badge--schematic">{d.illustrationBadge}</span>
+        </div>
+
+        <h1 class="case-title">{d.title}</h1>
+        <p class="case-subtitle">{d.subtitle}</p>
+
+        <ul class="stack-row" aria-label="Technologies applied">
+          {d.stack.map((tech) => (
+            <li class="mono">{tech}</li>
+          ))}
+        </ul>
+
+        <p class="case-decision">{d.decisionSummary}</p>
+        {d.slugId === 'audio-video-sync' && (
+          <a class="fixture-link" href="#a-timing-check-you-can-reproduce">See the measured results from a synthetic export →</a>
+        )}
+
+      </div>
+    </header>
+
+    <div class="container case-body-wrap">
+      <div class="case-prose">
+        {d.slugId === 'audio-video-sync' && <HlsPipelineDiagram />}
+        {d.slugId === 'transcript-timing-correction' && <TranscriptLab />}
+        {d.slugId === 'ordered-story-approvals' && <ApprovalStepper />}
+
+        <div class="markdown-content">
+          <Content />
+        </div>
+
+        <CharacterCallout heading={d.calloutHeading} quote={d.calloutQuote} />
+
+        <!-- Post-Case Navigation & CV Access -->
+        <div class="case-next-bar">
+          <div>
+            <p class="mono next-kicker">NEXT ENGINEERING CASE STUDY</p>
+            <a href={`/work/${nextEntry.data.slugId}/`} class="next-link">
+              0{nextEntry.data.order} · {nextEntry.data.title} →
+            </a>
+          </div>
+          <div class="next-actions">
+            <a href="/#work" class="btn btn--secondary btn--sm">All Work</a>
+            <a
+              href={SITE_META.cvUrl}
+              download="Mohamed_Ali_Rafat_CV.pdf"
+              class="btn btn--primary btn--sm"
+            >
+              Download CV (PDF)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .case-hero {
+    padding-block: clamp(2rem, 4.5vw, 3.5rem);
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--surface-paper);
+  }
+
+  .case-hero-inner {
+    max-width: 960px;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    color: var(--ink-muted);
+  }
+
+  .breadcrumb a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-bottom: 1rem;
+  }
+
+  .case-title {
+    font-size: clamp(2rem, 4vw, 2.85rem);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    margin: 0 0 0.85rem;
+  }
+
+  .case-subtitle {
+    font-size: clamp(1.05rem, 1.6vw, 1.22rem);
+    color: var(--ink-muted);
+    margin: 0 0 1.35rem;
+    max-width: 48rem;
+  }
+
+  .stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .stack-row li {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.62rem;
+    border-radius: 6px;
+    background: var(--bg-ivory);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .case-decision {
+    max-width: 45rem;
+    margin: 1rem 0 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--teal);
+  }
+
+  .fixture-link { display: inline-block; margin-top: .75rem; }
+  .markdown-content :global(table) { width: 100%; border-collapse: collapse; font-size: .9rem; margin: 1.25rem 0; }
+  .markdown-content :global(th), .markdown-content :global(td) { padding: .5rem; border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+  .markdown-content :global(th) { background: var(--surface-warm); }
+  @media (max-width: 30rem) {
+    .markdown-content :global(th), .markdown-content :global(td) { padding: .35rem; }
+  }
+
+  .case-body-wrap {
+    padding-block: .25rem 3rem;
+  }
+
+  .case-prose {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .markdown-content :global(h2) {
+    font-size: clamp(1.35rem, 2.4vw, 1.65rem);
+    line-height: 1.25;
+    margin: 2.35rem 0 0.85rem;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+  }
+
+  .markdown-content :global(p) {
+    margin: 0 0 1.1rem;
+    color: var(--ink);
+    font-size: 1.03rem;
+    line-height: 1.7;
+  }
+
+  .markdown-content :global(ul),
+  .markdown-content :global(ol) {
+    margin: 0 0 1.35rem;
+    padding-left: 1.35rem;
+    display: grid;
+    gap: 0.6rem;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .markdown-content :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    padding: 0.12rem 0.38rem;
+    border-radius: 5px;
+    background: var(--surface-warm);
+  }
+
+  .case-next-bar {
+    margin-top: 3rem;
+    padding: 1.4rem 1.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--surface-paper);
+    border: 2px solid var(--ink);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .next-kicker {
+    margin: 0 0 0.25rem;
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+  }
+
+  .next-link {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .next-link:hover {
+    text-decoration: underline;
+  }
+
+  .next-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+</style>

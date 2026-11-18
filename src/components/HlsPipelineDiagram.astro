@@ -1,0 +1,207 @@
+<section class="schematic-box" data-hls-lab aria-labelledby="hls-lab-title">
+  <div class="schematic-head">
+    <div>
+      <p class="eyebrow">Audio and video export</p>
+      <h2 id="hls-lab-title" class="schematic-title">What happens to the exported file?</h2>
+    </div>
+    <span class="badge badge--schematic">Illustrative Schematic</span>
+  </div>
+
+  <p data-demo-controls hidden>Choose a scenario to see what gets encoded and how the export is checked.</p>
+  <div class="mode-tabs" role="group" aria-label="Select pipeline scenario" data-demo-controls hidden>
+    <button type="button" class="mode-btn is-active" data-hls-mode="selective" aria-pressed="true">
+      1. Selective HLS Edit
+    </button>
+    <button type="button" class="mode-btn" data-hls-mode="fallback" aria-pressed="false">
+      2. Full-Encode Fallback
+    </button>
+    <button type="button" class="mode-btn" data-hls-mode="fixture" aria-pressed="false">
+      3. Flash &amp; Beep Fixture
+    </button>
+  </div>
+
+  <div class="segments-grid" aria-live="polite" data-hls-grid>
+    <div class="seg-card" data-seg="0">
+      <span class="mono seg-id">seg_00.ts</span>
+      <span class="mono seg-state" data-seg-label="0">COPY · UNCHANGED</span>
+    </div>
+    <div class="seg-card is-highlight" data-seg="1">
+      <span class="mono seg-id">seg_01.ts (Trimmed)</span>
+      <span class="mono seg-state" data-seg-label="1">FFMPEG RE-ENCODE</span>
+    </div>
+    <div class="seg-card" data-seg="2">
+      <span class="mono seg-id">seg_02.ts</span>
+      <span class="mono seg-state" data-seg-label="2">COPY · UNCHANGED</span>
+    </div>
+    <div class="seg-card" data-seg="3">
+      <span class="mono seg-id">S3 Transfer</span>
+      <span class="mono seg-state" data-seg-label="3">PARALLEL UPLOAD</span>
+    </div>
+  </div>
+
+  <p class="schematic-readout" data-hls-explanation>
+    <strong>Selective HLS mode (Pipeline Fix):</strong> Only modified segments (<code class="mono">seg_01.ts</code>) run through FFmpeg while unchanged segments copy cleanly and upload to AWS S3 in parallel—avoiding redundant transcoding during edits.
+  </p>
+
+  <noscript>
+    <p class="noscript-note">
+      <strong>All three scenarios summarized:</strong> (1) Selective HLS re-encodes only edited segments with parallel S3 uploads; (2) Incompatible stream/cut boundaries trigger a full-encode safety fallback + bounded retries; (3) Real-media flash-and-beep regression fixtures independently verify output stream alignment.
+    </p>
+  </noscript>
+</section>
+
+<script>
+  const lab = document.querySelector<HTMLElement>('[data-hls-lab]');
+  if (lab) {
+    const buttons = lab.querySelectorAll<HTMLButtonElement>('[data-hls-mode]');
+    const explanation = lab.querySelector<HTMLElement>('[data-hls-explanation]');
+    const cards = lab.querySelectorAll<HTMLElement>('[data-seg]');
+
+    const configs: Record<string, { headings: string[]; labels: string[]; active: number[]; text: string }> = {
+      selective: {
+        headings: ['seg_00.ts', 'seg_01.ts (Trimmed)', 'seg_02.ts', 'S3 Transfer'],
+        labels: ['COPY · UNCHANGED', 'FFMPEG RE-ENCODE', 'COPY · UNCHANGED', 'PARALLEL S3 UPLOAD'],
+        active: [1],
+        text: '<strong>Selective HLS mode (Pipeline Fix):</strong> Only modified segments (<code class="mono">seg_01.ts</code>) run through FFmpeg while unchanged segments copy cleanly and upload to AWS S3 in parallel—avoiding redundant transcoding during edits.',
+      },
+      fallback: {
+        headings: ['First segment', 'Trimmed segment', 'Last segment', 'Processing safeguard'],
+        labels: ['FULL RE-ENCODE', 'FULL RE-ENCODE', 'FULL RE-ENCODE', 'BOUNDED RETRY GUARD'],
+        active: [0, 1, 2, 3],
+        text: '<strong>Full-Encode Safety Fallback (Pipeline Fix):</strong> When stream parameters or cut boundaries cannot guarantee seamless HLS stitching, the pipeline falls back automatically to a clean full re-encode with bounded retries.',
+      },
+      fixture: {
+        headings: ['Test clip', 'Picture cue', 'Sound cue', 'Output check'],
+        labels: ['SYNTHETIC INPUT', '1f FLASH @ 01:12.00', '1 kHz BEEP @ 01:12.00', 'ASSERT 0 ms DRIFT ✓'],
+        active: [1, 2, 3],
+        text: '<strong>Flash-and-Beep Regression Fixture (Verification):</strong> Distinct from the pipeline fix itself, real-media test fixtures pass a synthetic flash and tone through actual FFmpeg runs to catch timing regressions objectively.',
+      },
+    };
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.hlsMode || 'selective';
+        const cfg = configs[mode];
+        if (!cfg) return;
+
+        buttons.forEach((b) => {
+          const active = b === btn;
+          b.classList.toggle('is-active', active);
+          b.setAttribute('aria-pressed', String(active));
+        });
+
+        cards.forEach((card, idx) => {
+          const heading = card.querySelector<HTMLElement>('.seg-id');
+          if (heading) heading.textContent = cfg.headings[idx];
+          const lbl = card.querySelector<HTMLElement>(`[data-seg-label="${idx}"]`);
+          if (lbl) lbl.textContent = cfg.labels[idx];
+          card.classList.toggle('is-highlight', cfg.active.includes(idx));
+        });
+
+        if (explanation) explanation.innerHTML = cfg.text;
+      });
+    });
+    lab.querySelectorAll('[data-demo-controls]').forEach((el) => el.removeAttribute('hidden'));
+  }
+</script>
+
+<style>
+  .schematic-box {
+    margin-block: 2rem;
+    padding: 1.4rem;
+    background: var(--surface-paper);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+  }
+
+  .schematic-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .schematic-title {
+    margin: 0.25rem 0 0;
+    font-size: 1.2rem;
+  }
+
+  .mode-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .mode-btn {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-subtle);
+    background: var(--bg-ivory);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .mode-btn.is-active {
+    background: var(--teal);
+    color: var(--surface-paper);
+    border-color: var(--teal);
+  }
+
+  .segments-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+  }
+
+  .seg-card {
+    background: var(--console-bg);
+    color: var(--console-text);
+    border: 1.5px solid var(--console-border);
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .seg-card.is-highlight {
+    border-color: var(--signal-mint);
+    background: var(--console-card);
+  }
+
+  .seg-id {
+    font-size: 0.75rem;
+    color: var(--console-muted);
+  }
+
+  .seg-state {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--signal-mint);
+  }
+
+  .schematic-readout,
+  .noscript-note {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--ink-muted);
+    line-height: 1.55;
+  }
+
+  .schematic-readout :global(strong) {
+    color: var(--ink);
+  }
+
+  @media (max-width: 720px) {
+    .segments-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -1,0 +1,430 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SyncHero from '../components/SyncHero.astro';
+import CaseCard from '../components/CaseCard.astro';
+import {
+  EXPERIENCE_ROLES,
+  SKILLS_IN_PRACTICE,
+  PUBLIC_CODE_SAMPLES,
+  EDUCATION_AND_RECOGNITION,
+} from '../data/portfolio';
+
+const cases = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+
+const pageTitle = 'Mohamed Ali Rafat · Software Engineer — Video Systems, Backend & Applied AI';
+const pageDescription =
+  'Portfolio of Mohamed Ali Rafat, a Software Engineer in Giza, Egypt building backend workflows, FFmpeg/HLS media reliability, and timing-safe AI systems at Spokn.';
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} ogImage="/og/home.png" canonicalPath="/">
+  <SyncHero />
+
+  <!-- 1. Selected Engineering Work -->
+  <section id="work" class="section" aria-labelledby="work-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="work-heading" class="section-title">Selected work at Spokn</h2>
+      </div>
+
+      <div class="cases-grid">
+        {cases.map((entry) => (
+          <CaseCard
+            order={entry.data.order}
+            slugId={entry.data.slugId}
+            title={entry.data.title}
+            evidenceBadge={entry.data.evidenceBadge}
+            cardSummary={entry.data.cardSummary}
+            stack={entry.data.stack}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. About & Experience -->
+  <section id="experience" class="section" aria-labelledby="experience-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="experience-heading" class="section-title">Experience</h2>
+      </div>
+      <div class="timeline" aria-label="Work experience in reverse chronological order">
+        {EXPERIENCE_ROLES.map((job) => (
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <p class="mono job-period">{job.period}</p>
+              <h3 class="job-company">{job.company}</h3>
+              <p class="job-role">
+                {job.role} · <span>{job.location}</span>
+              </p>
+              <span class="badge badge--neutral">{job.categoryLabel}</span>
+            </div>
+
+            <div class="timeline-content">
+              <p class="job-summary">{job.summary}</p>
+              <ul class="job-bullets">
+                {job.highlights.slice(0, 3).map((bullet) => (
+                  <li>{bullet}</li>
+                ))}
+              </ul>
+              {job.highlights.length > 3 && (
+                <details class="more-work">
+                  <summary>More work at {job.company}</summary>
+                  <ul class="job-bullets">{job.highlights.slice(3).map((bullet) => <li>{bullet}</li>)}</ul>
+                </details>
+              )}
+              {job.relatedCaseLinks && (
+                <div class="job-cases">
+                  {job.relatedCaseLinks.map((lnk) => (
+                    <a href={lnk.href} class="mono job-case-link">
+                      {lnk.label} →
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Skills in Practice -->
+  <section id="skills" class="section" aria-labelledby="skills-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="skills-heading" class="section-title">Skills in practice</h2>
+      </div>
+
+      <div class="skills-grid">
+        {SKILLS_IN_PRACTICE.map((group) => (
+          <article class="skill-card">
+            <div>
+              <p class="mono skill-tag">{group.categoryTag}</p>
+              <h3 class="skill-title">{group.title}</h3>
+              <p class="skill-desc">{group.description}</p>
+              <ul class="skill-chips">
+                {group.skills.map((s) => (
+                  <li class="mono">{s}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="skill-proofs">
+              <a href={group.proofHref} class="proof-link">
+                {group.proofLabel} <span aria-hidden="true">→</span>
+              </a>
+              {group.secondaryProof && (
+                <a
+                  href={group.secondaryProof.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="proof-link proof-link--secondary"
+                >
+                  {group.secondaryProof.label} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Public Code Samples -->
+  <section id="open-source" class="section" aria-labelledby="oss-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="oss-heading" class="section-title">Open source</h2>
+      </div>
+
+      <div class="oss-grid">
+        {PUBLIC_CODE_SAMPLES.map((repo) => (
+          <article class="oss-card">
+            <div>
+              <span class="badge">{repo.badge}</span>
+              <h3 class="oss-title">
+                <a href={repo.repoUrl} target="_blank" rel="noopener noreferrer">
+                  {repo.name} <span aria-hidden="true">↗</span>
+                </a>
+              </h3>
+              <p class="oss-desc">{repo.description}</p>
+              <p class="oss-note">{repo.engineeringNote}</p>
+            </div>
+            <div>
+              <ul class="skill-chips">
+                {repo.stack.map((item) => (
+                  <li class="mono">{item}</li>
+                ))}
+              </ul>
+              <a
+                href={repo.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="proof-link"
+              >
+                Inspect repository on GitHub <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Education & Recognition -->
+  <section id="education" class="section" aria-labelledby="edu-heading">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="edu-heading" class="section-title">Education and recognition</h2>
+      </div>
+
+      <div class="edu-grid">
+        {EDUCATION_AND_RECOGNITION.map((item) => (
+          <article class="edu-card">
+            <div class="edu-top">
+              <span class="mono edu-period">{item.period}</span>
+              <span class="badge badge--neutral">{item.type}</span>
+            </div>
+            <h3 class="edu-title">{item.title}</h3>
+            <p class="edu-org">{item.org}</p>
+            <p class="edu-detail">{item.detail}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.35rem;
+  }
+
+  .more-work { margin-top: .8rem; }
+  .more-work summary { color: var(--teal); font-weight: 600; cursor: pointer; }
+  .more-work[open] .job-bullets { margin-top: .7rem; }
+
+  /* Experience Timeline */
+  .timeline {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 2rem;
+    padding: 1.6rem;
+    background: var(--surface-paper);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+  }
+
+  .job-period {
+    margin: 0 0 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--teal);
+  }
+
+  .job-company {
+    margin: 0 0 0.25rem;
+    font-size: 1.3rem;
+  }
+
+  .job-role {
+    margin: 0 0 0.75rem;
+    font-weight: 600;
+    font-size: 0.96rem;
+  }
+
+  .job-role span {
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+
+  .job-summary {
+    margin: 0 0 0.9rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .job-bullets {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.5rem;
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+  }
+
+  .job-cases {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1.25rem;
+    margin-top: 1.15rem;
+    padding-top: 0.95rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .job-case-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .job-case-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Skills Grid */
+  .skills-grid,
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.35rem;
+  }
+
+  .oss-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.35rem;
+  }
+
+  .skill-card,
+  .oss-card,
+  .edu-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--surface-paper);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.45rem;
+  }
+
+  .skill-tag {
+    margin: 0 0 0.35rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--teal);
+  }
+
+  .skill-title,
+  .oss-title,
+  .edu-title {
+    margin: 0 0 0.55rem;
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  .oss-title {
+    margin-top: 0.8rem;
+  }
+
+  .oss-title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .oss-title a:hover {
+    color: var(--teal);
+    text-decoration: underline;
+  }
+
+  .skill-desc,
+  .oss-desc,
+  .edu-detail {
+    margin: 0 0 1rem;
+    font-size: 0.94rem;
+    color: var(--ink-muted);
+  }
+
+  .oss-note {
+    margin: 0 0 1.15rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    background: var(--bg-ivory);
+    border-left: 3px solid var(--teal);
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+
+  .skill-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.2rem;
+  }
+
+  .skill-chips li {
+    font-size: 0.74rem;
+    padding: 0.22rem 0.58rem;
+    border-radius: 6px;
+    background: var(--bg-ivory);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .skill-proofs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .proof-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .proof-link:hover {
+    text-decoration: underline;
+  }
+
+  .proof-link--secondary {
+    font-size: 0.83rem;
+    color: var(--ink-muted);
+  }
+
+  .edu-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .edu-period {
+    font-size: 0.76rem;
+    color: var(--teal);
+    font-weight: 600;
+  }
+
+  .edu-org {
+    margin: 0 0 0.55rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 980px) {
+    .cases-grid,
+    .skills-grid,
+    .edu-grid,
+    .oss-grid,
+    .timeline-item {
+      grid-template-columns: 1fr;
+    }
+
+    .timeline-item {
+      gap: 1rem;
+    }
+  }
+</style>
