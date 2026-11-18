@@ -1,25 +1,16 @@
 ---
 interface Props {
-  order: number;
   slugId: 'audio-video-sync' | 'transcript-timing-correction' | 'ordered-story-approvals';
   title: string;
-  evidenceBadge: string;
   cardSummary: string;
-  stack: string[];
 }
 
-const { order, slugId, title, evidenceBadge, cardSummary, stack } = Astro.props;
+const { slugId, title, cardSummary } = Astro.props;
 const href = `/work/${slugId}/`;
-const orderStr = String(order).padStart(2, '0');
 ---
 
 <article class="case-card">
   <div class="card-top">
-    <div class="card-meta">
-      <span class="mono card-num">CASE {orderStr}</span>
-      <span class="badge badge--neutral">{evidenceBadge}</span>
-    </div>
-
     <!-- Custom Labeled Editorial Schematic Motif per Case -->
     <div class="card-schematic" aria-hidden="true">
       {slugId === 'audio-video-sync' && (
@@ -66,19 +57,9 @@ const orderStr = String(order).padStart(2, '0');
     <p class="card-summary">{cardSummary}</p>
   </div>
 
-  <div class="card-bottom">
-    <ul class="stack-pills" aria-label="Technologies used">
-      {stack.slice(0, 4).map((tech) => (
-        <li class="mono">{tech}</li>
-      ))}
-    </ul>
-
-    <div class="card-cta-row">
-      <a href={href} class="card-link" aria-label={`Read case study: ${title}`}>
-        Read case study <span aria-hidden="true">→</span>
-      </a>
-    </div>
-  </div>
+  <a href={href} class="card-link" aria-label={`Read case study: ${title}`}>
+    Read case study <span aria-hidden="true">→</span>
+  </a>
 </article>
 
 <style>
@@ -89,28 +70,13 @@ const orderStr = String(order).padStart(2, '0');
     background: var(--surface-paper);
     border: 1.5px solid var(--border-subtle);
     border-radius: var(--radius-lg);
-    padding: 1.45rem;
+    padding: clamp(1rem, 2vw, 1.45rem);
     transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
   }
 
   .case-card:hover {
     border-color: var(--teal);
     box-shadow: 0 10px 24px rgba(32, 37, 33, 0.06);
-  }
-
-  .card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .card-num {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--teal);
   }
 
   .card-schematic {
@@ -143,38 +109,11 @@ const orderStr = String(order).padStart(2, '0');
   .card-summary {
     color: var(--ink-muted);
     font-size: 0.96rem;
-    margin: 0 0 1.35rem;
+    margin: 0 0 .85rem;
   }
-
-  .stack-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    list-style: none;
-    padding: 0 0 1rem;
-    margin: 0 0 0.9rem;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
-  .stack-pills li {
-    font-size: 0.73rem;
-    padding: 0.2rem 0.55rem;
-    border-radius: 6px;
-    background: var(--bg-ivory);
-    border: 1px solid var(--border-subtle);
-    color: var(--ink);
-  }
-
-  .card-cta-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-
 
   .card-link {
+    align-self: flex-start;
     font-size: 0.92rem;
     font-weight: 600;
     text-decoration: none;

@@ -30,12 +30,9 @@ const pageDescription =
       <div class="cases-grid">
         {cases.map((entry) => (
           <CaseCard
-            order={entry.data.order}
             slugId={entry.data.slugId}
             title={entry.data.title}
-            evidenceBadge={entry.data.evidenceBadge}
             cardSummary={entry.data.cardSummary}
-            stack={entry.data.stack}
           />
         ))}
       </div>

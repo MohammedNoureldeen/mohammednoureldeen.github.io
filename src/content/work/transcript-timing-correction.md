@@ -17,8 +17,8 @@ stack:
   - Python
   - REST APIs
   - Regression Testing
-cardSummary: Integrated OpenAI for context-aware glossary corrections on individual word occurrences while locking word-level timestamps and retaining original text if model calls fail.
-decisionSummary: “We recorded on spoken after we had spoken with engineering.” The first word could mean Spokn. I let the model decide about each occurrence and kept the timestamps under application control.
+cardSummary: Editors can correct a name without shifting captions. Each suggested word change keeps its original start and end times.
+decisionSummary: “We recorded on spoken after we had spoken with engineering.” The first occurrence of “spoken” could mean Spokn. I let the model decide about each occurrence and kept the timestamps under application control.
 calloutHeading: Designing AI features for failure
 calloutQuote: An AI polish step should never be a single point of failure for a core media workflow. Locking timestamps in code and keeping the original transcript when a model call fails keeps editing predictable.
 ---

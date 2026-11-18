@@ -18,7 +18,7 @@ stack:
   - Sequelize
   - Customer.io
   - REST APIs
-cardSummary: Built ordered story approval workflows, reviewer assignments, role restrictions, team administration APIs, and Customer.io notification triggers.
+cardSummary: Each reviewer hears when it’s their turn. The backend checks the active step and the reviewer’s role before advancing the story.
 decisionSummary: The backend handles step order and reviewer permissions. A client can show the active step using those rules.
 calloutHeading: Product rules belong in the API boundary
 calloutQuote: Hiding an “Approve” button in the UI isn’t a permission model. Enforcing step order and role checks in the service layer guarantees every client—and every Customer.io notification—follows the exact same rule.

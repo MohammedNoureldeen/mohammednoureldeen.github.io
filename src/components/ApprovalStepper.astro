@@ -25,10 +25,13 @@
     </div>
   </div>
 
-  <p data-demo-controls hidden>Try approving the final step early. Then approve the active step and see which reviewer gets notified.</p>
+  <p data-demo-controls hidden>Try the active step as another reviewer. Then approve it as the assigned reviewer and watch who gets notified.</p>
   <div class="approval-actions" data-demo-controls hidden>
     <button type="button" class="app-btn app-btn--primary" data-approve-active>
-      Approve active step (Valid role)
+      Approve as the assigned reviewer
+    </button>
+    <button type="button" class="app-btn" data-wrong-reviewer>
+      Try as the editorial lead
     </button>
     <button type="button" class="app-btn" data-try-skip>
       Attempt Step 03 out of order
@@ -38,6 +41,7 @@
     </button>
   </div>
 
+  <noscript><p>If the editorial lead tries to approve the active compliance step, the request is denied. Compliance stays active and no new notification is sent.</p></noscript>
   <p class="approval-log mono" data-approval-log role="status">
     API STATE: Step 01 complete → Step 02 unlocked &amp; assigned reviewer notified via Customer.io. Step 03 remains locked.
   </p>
@@ -47,13 +51,14 @@
   const aLab = document.querySelector<HTMLElement>('[data-approval-lab]');
   if (aLab) {
     const approveBtn = aLab.querySelector<HTMLButtonElement>('[data-approve-active]');
+    const wrongReviewerBtn = aLab.querySelector<HTMLButtonElement>('[data-wrong-reviewer]');
     const skipBtn = aLab.querySelector<HTMLButtonElement>('[data-try-skip]');
     const resetBtn = aLab.querySelector<HTMLButtonElement>('[data-reset-steps]');
     const log = aLab.querySelector<HTMLElement>('[data-approval-log]');
 
     let currentStep = 2; // 2 = Step 2 active, 3 = Step 3 active, 4 = Published
 
-    const updateUI = (customMessage?: string) => {
+    const updateUI = () => {
       for (let i = 1; i <= 3; i++) {
         const card = aLab.querySelector<HTMLElement>(`[data-step-card="${i}"]`);
         const st = aLab.querySelector<HTMLElement>(`[data-step-state="${i}"]`);
@@ -78,14 +83,13 @@
       if (approveBtn) {
         approveBtn.disabled = currentStep > 3;
         approveBtn.textContent =
-          currentStep > 3 ? 'All 3 steps approved ✓' : `Approve Step 0${currentStep} (Valid role)`;
+          currentStep > 3 ? 'All 3 steps approved ✓' : 'Approve as the assigned reviewer';
       }
+      if (wrongReviewerBtn) wrongReviewerBtn.disabled = currentStep > 3;
       if (skipBtn) skipBtn.disabled = currentStep >= 3;
 
       if (log) {
-        if (customMessage) {
-          log.textContent = customMessage;
-        } else if (currentStep === 2) {
+        if (currentStep === 2) {
           log.textContent =
             'API STATE: Step 01 complete → Step 02 unlocked & assigned reviewer notified via Customer.io.';
         } else if (currentStep === 3) {
@@ -103,6 +107,12 @@
         currentStep += 1;
         updateUI();
       }
+    });
+
+    wrongReviewerBtn?.addEventListener('click', () => {
+      if (currentStep > 3 || !log) return;
+      const reviewer = currentStep === 2 ? 'compliance reviewer' : 'executive reviewer';
+      log.textContent = `Permission denied. The editorial lead cannot approve Step 0${currentStep}. The step remains active for the ${reviewer}. No new notification was sent.`;
     });
 
     skipBtn?.addEventListener('click', () => {
@@ -223,7 +233,7 @@
     border-color: var(--teal);
   }
 
-  .app-btn--primary:disabled {
+  .app-btn:disabled {
     opacity: 0.55;
     cursor: not-allowed;
   }

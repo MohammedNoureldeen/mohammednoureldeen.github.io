@@ -22,7 +22,7 @@
 
   <div class="tokens-panel" aria-live="polite">
     <p class="mono glossary-rule">
-      CUSTOM GLOSSARY ENTRY: <strong>"Spokn"</strong> (Product noun — do not alter ordinary verb "spoken")
+      Product name in the glossary: <strong>Spokn</strong>
     </p>
 
     <div class="sentence-flow">
@@ -43,9 +43,7 @@
       <span>with engineering.”</span>
     </div>
 
-    <p class="lab-status" data-t-status>
-      <strong>State — Context-Aware Glossary Patch:</strong> Occurrence 1 updates from <code class="mono">"spoken"</code> → <code class="mono">"Spokn"</code> (product noun), Occurrence 2 stays <code class="mono">"spoken"</code> (ordinary verb), and both word timecodes (<code class="mono">00:04.12–00:04.58</code> and <code class="mono">00:06.80–00:07.24</code>) remain 100% unchanged.
-    </p>
+    <p class="lab-status" data-t-status>The product name changes to “Spokn.” The verb and both timestamps stay the same.</p>
   </div>
 </section>
 
@@ -62,19 +60,19 @@
         w1: 'spoken',
         patched: false,
         fallback: false,
-        note: '<strong>State — Raw ASR Output:</strong> Speech-to-text transcribes both occurrences as lowercase <code class="mono">"spoken"</code>. A naive find-and-replace would corrupt the second verb; a freeform LLM rewrite could shift timestamps.',
+        note: 'Both occurrences read “spoken” in the original transcript.',
       },
       corrected: {
         w1: 'Spokn',
         patched: true,
         fallback: false,
-        note: '<strong>State — Context-Aware Glossary Patch:</strong> Occurrence 1 updates to <code class="mono">"Spokn"</code> (product context), Occurrence 2 stays <code class="mono">"spoken"</code> (verb context), and both start/end timestamps stay strictly locked.',
+        note: 'The product name changes to “Spokn.” The verb and both timestamps stay the same.',
       },
       failure: {
         w1: 'spoken',
         patched: false,
         fallback: true,
-        note: '<strong>State — Simulated OpenAI Timeout / Error:</strong> When the external model call fails, the pipeline retains the original unmodified text (<code class="mono">"spoken"</code>) and exact word timings so editing is never blocked.',
+        note: 'The original words and both timestamps are preserved.',
       },
     };
 
@@ -95,7 +93,7 @@
           tokenOne.classList.toggle('is-patched', st.patched);
           tokenOne.classList.toggle('is-fallback', st.fallback);
         }
-        if (status) status.innerHTML = st.note;
+        if (status) status.textContent = st.note;
       });
     });
     tLab.querySelectorAll('[data-demo-controls]').forEach((el) => el.removeAttribute('hidden'));
@@ -214,7 +212,4 @@
     line-height: 1.55;
   }
 
-  .lab-status :global(strong) {
-    color: var(--ink);
-  }
 </style>
