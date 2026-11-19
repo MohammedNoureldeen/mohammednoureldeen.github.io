@@ -17,7 +17,7 @@ stack:
   - TypeScript
   - AWS S3
   - Real-Media Regression Fixtures
-cardSummary: An edit could leave a speaker’s voice out of sync with their lips. I checked the exported video with a flash and a beep.
+cardSummary: Keep a speaker’s lips and voice together after a cut.
 decisionSummary: I checked the exported file itself. A successful encode can still leave a speaker’s lips ahead of the sound.
 calloutHeading: Why a flash and a beep?
 calloutQuote: Human speech makes small timing offsets surprisingly hard to spot consistently by eye. A single-frame visual flash paired with a sharp tone turns “does this look in sync?” into a repeatable regression test on real rendered media.

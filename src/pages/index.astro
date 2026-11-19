@@ -31,7 +31,7 @@ const pageDescription =
         {cases.map((entry) => (
           <CaseCard
             slugId={entry.data.slugId}
-            title={entry.data.title}
+            title={entry.data.shortTitle}
             cardSummary={entry.data.cardSummary}
           />
         ))}
@@ -412,6 +412,10 @@ const pageDescription =
   }
 
   @media (max-width: 980px) {
+    #work { padding-block: 1.75rem; }
+    #work .section-header { margin-bottom: 1rem; }
+    .cases-grid { gap: .65rem; }
+
     .cases-grid,
     .skills-grid,
     .edu-grid,
