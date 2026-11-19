@@ -1,149 +1,35 @@
 ---
 import { SITE_META } from '../data/portfolio';
 ---
-
 <footer id="contact" class="site-footer">
   <div class="container">
-    <div class="contact-card">
-      <div class="contact-copy">
-        <p class="eyebrow">Contact & Curriculum Vitae</p>
-        <h2 class="contact-title">Building video, backend, or applied-AI products? Let’s talk.</h2>
-        <p class="contact-lead">
-          Based in {SITE_META.location} and experienced with remote engineering teams. Reach out directly by email, inspect my open-source repositories, or download a copy of my CV.
-        </p>
-        <div class="contact-actions">
-          <a href={`mailto:${SITE_META.email}`} class="btn btn--primary">
-            Email Mohamed
-          </a>
-          <a
-            href={SITE_META.cvUrl}
-            download="Mohamed_Ali_Rafat_CV.pdf"
-            class="btn btn--secondary"
-          >
-            Download CV (PDF)
-          </a>
-        </div>
+    <p class="kicker">Contact</p>
+    <div class="contact-grid">
+      <div><h2>Let’s talk<span>.</span></h2>
+        <a class="email" href={`mailto:${SITE_META.email}`}>{SITE_META.email} <span aria-hidden="true">↗</span></a>
       </div>
-
-      <div class="contact-links" aria-label="Direct profile links">
-        <div class="link-group">
-          <span class="mono link-label">DIRECT EMAIL</span>
-          <a href={`mailto:${SITE_META.email}`}>{SITE_META.email}</a>
-        </div>
-        <div class="link-group">
-          <span class="mono link-label">LINKEDIN</span>
-          <a href={SITE_META.linkedin} target="_blank" rel="noopener noreferrer">
-            linkedin.com/in/MuhamedRafat
-          </a>
-        </div>
-        <div class="link-group">
-          <span class="mono link-label">GITHUB</span>
-          <a href={SITE_META.github} target="_blank" rel="noopener noreferrer">
-            github.com/MohammedNoureldeen
-          </a>
-        </div>
-        <div class="link-group">
-          <span class="mono link-label">LOCATION</span>
-          <span>{SITE_META.location}</span>
-        </div>
+      <div class="links">
+        <a href={SITE_META.github}>GitHub <span aria-hidden="true">↗</span></a>
+        <a href={SITE_META.linkedin}>LinkedIn <span aria-hidden="true">↗</span></a>
+        <a href={SITE_META.cvUrl} download>Download CV (PDF) <span aria-hidden="true">↓</span></a>
       </div>
     </div>
-
-    <div class="footer-meta">
-      <p>
-        <strong>{SITE_META.name}</strong> · {SITE_META.role}. Employer case studies describe public-safe engineering architecture and verification methods without private code, internal screenshots, or customer media.
-      </p>
-      <p class="mono footer-stack">Built with Astro + TypeScript · Static HTML first</p>
-    </div>
+    <div class="colophon"><span>{SITE_META.name} · {SITE_META.role}</span><span>{SITE_META.location}</span></div>
   </div>
 </footer>
-
 <style>
-  .site-footer {
-    padding-block: clamp(3.5rem, 6vw, 5rem) 2.5rem;
-    border-top: 1px solid var(--border-subtle);
-    background: var(--surface-warm);
-  }
-
-  .contact-card {
-    display: grid;
-    grid-template-columns: 1.35fr 1fr;
-    gap: 2.5rem;
-    padding: clamp(1.5rem, 3.5vw, 2.5rem);
-    background: var(--surface-paper);
-    border: 2px solid var(--ink);
-    border-radius: var(--radius-lg);
-  }
-
-  .contact-title {
-    font-size: clamp(1.5rem, 2.8vw, 2.05rem);
-    line-height: 1.22;
-    margin: 0.4rem 0 0.75rem;
-  }
-
-  .contact-lead {
-    color: var(--ink-muted);
-    margin: 0 0 1.5rem;
-    max-width: 36rem;
-  }
-
-  .contact-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.85rem;
-  }
-
-  .contact-links {
-    display: grid;
-    gap: 1rem;
-    align-content: center;
-    padding-left: 2rem;
-    border-left: 1px solid var(--border-subtle);
-  }
-
-  .link-group {
-    overflow-wrap: anywhere;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .link-label {
-    font-size: 0.72rem;
-    color: var(--ink-muted);
-    letter-spacing: 0.04em;
-  }
-
-  .footer-meta {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 2rem;
-    font-size: 0.86rem;
-    color: var(--ink-muted);
-  }
-
-  .footer-meta p {
-    margin: 0;
-    max-width: 48rem;
-  }
-
-  .footer-stack {
-    font-size: 0.78rem;
-  }
-
-  @media (max-width: 860px) {
-    .contact-card {
-      grid-template-columns: 1fr;
-      gap: 1.75rem;
-    }
-
-    .contact-links {
-      padding-left: 0;
-      padding-top: 1.5rem;
-      border-left: 0;
-      border-top: 1px solid var(--border-subtle);
-    }
-  }
+  .site-footer { background:#252923; color:var(--surface-paper); padding:var(--section-space) 0 1.5rem; }
+  .kicker { color:var(--peach); margin:0 0 1rem; }
+  .contact-grid { display:grid; grid-template-columns:1.6fr 1fr; align-items:end; gap:2rem; }
+  h2 { margin:0 0 1rem; font-weight:580; letter-spacing:-.075em; font-size:clamp(3.7rem,8vw,7.5rem); line-height:.95; }
+  h2 span { color:var(--peach); }
+  a { color:inherit; text-decoration:none; }
+  a:hover { color:var(--peach); }
+  a:focus-visible { outline-color:var(--peach); }
+  .email { display:inline-block; font-size:clamp(1rem,2.1vw,1.65rem); overflow-wrap:anywhere; border-bottom:1px solid #abae9e; }
+  .links { display:grid; }
+  .links a { display:flex; align-items:center; justify-content:space-between; min-height:44px; border-bottom:1px solid #565c51; }
+  .links a span { color:var(--peach); }
+  .colophon { margin-top:clamp(2.5rem,5vw,5rem); border-top:1px solid #565c51; padding-top:1rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:.5rem; font:400 .72rem/1.5 var(--font-mono); color:#d3d4c9; }
+  @media(max-width:700px) { .contact-grid { grid-template-columns:1fr; } }
 </style>

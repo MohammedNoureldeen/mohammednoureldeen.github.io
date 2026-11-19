@@ -37,7 +37,7 @@ export const SITE_META = {
   github: 'https://github.com/MohammedNoureldeen',
   cvUrl: '/cv/Mohamed_Ali_Rafat_CV.pdf',
   heroLead:
-    'I build the systems behind video editing and export. At Spokn, my work has ranged from keeping sound and picture in sync to correcting transcripts without moving a word’s timing.',
+    'I build the systems behind video editing and export. I keep sound and picture in sync and correct transcripts without moving a word’s timing.',
 };
 
 export const EXPERIENCE_ROLES: ExperienceRole[] = [
@@ -48,7 +48,7 @@ export const EXPERIENCE_ROLES: ExperienceRole[] = [
     location: 'Remote',
     categoryLabel: 'Employer Project · Production Video Platform',
     summary:
-      'Backend and media engineering for a collaborative video editor.',
+      'I build Node.js and TypeScript services for a collaborative video editor, from export pipelines to reviewer permissions.',
     highlights: [
       'Fixed FFmpeg timing issues and checked the exported video with a flash-and-beep regression test.',
       'Integrated OpenAI into glossary-based transcript correction, making context-aware decisions per occurrence while locking word timings and retaining original text when model calls fail.',

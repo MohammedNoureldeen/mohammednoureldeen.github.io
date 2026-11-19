@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 }
 
 const { entry, nextEntry } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 const d = entry.data;
 const pageTitle = `${d.title} — Case Study · Mohamed Ali Rafat`;
 ---
@@ -32,17 +32,14 @@ const pageTitle = `${d.title} — Case Study · Mohamed Ali Rafat`;
 >
   <article class="case-page">
     <header class="case-hero">
-      <div class="container case-hero-inner">
+      <div class="container">
         <nav class="breadcrumb" aria-label="Breadcrumb">
           <a href="/#work">← Back to Selected Work</a>
           <span class="mono" aria-hidden="true">/</span>
           <span class="mono">Case Study 0{d.order}</span>
         </nav>
 
-        <div class="badge-row">
-          <span class="badge">{d.evidenceBadge} ({d.period})</span>
-          <span class="badge badge--schematic">{d.illustrationBadge}</span>
-        </div>
+        <p class="kicker case-meta">{d.employer} / {d.role} / {d.period}</p>
 
         <h1 class="case-title">{d.title}</h1>
         <p class="case-subtitle">{d.subtitle}</p>
@@ -62,11 +59,17 @@ const pageTitle = `${d.title} — Case Study · Mohamed Ali Rafat`;
     </header>
 
     <div class="container case-body-wrap">
+      <nav class="contents" aria-label="Case study contents">
+        <p class="kicker">In this case</p>
+        <a href="#demo">Interactive example</a>
+        {headings.filter(h => h.depth === 2).map(h => <a href={`#${h.slug}`}>{h.text}</a>)}
+      </nav>
       <div class="case-prose">
-        {d.slugId === 'audio-video-sync' && <HlsPipelineDiagram />}
-        {d.slugId === 'transcript-timing-correction' && <TranscriptLab />}
-        {d.slugId === 'ordered-story-approvals' && <ApprovalStepper />}
-
+        <div id="demo">
+          {d.slugId === 'audio-video-sync' && <HlsPipelineDiagram />}
+          {d.slugId === 'transcript-timing-correction' && <TranscriptLab />}
+          {d.slugId === 'ordered-story-approvals' && <ApprovalStepper />}
+        </div>
         <div class="markdown-content">
           <Content />
         </div>
@@ -104,10 +107,6 @@ const pageTitle = `${d.title} — Case Study · Mohamed Ali Rafat`;
     background: var(--surface-paper);
   }
 
-  .case-hero-inner {
-    max-width: 960px;
-  }
-
   .breadcrumb {
     display: flex;
     align-items: center;
@@ -126,17 +125,14 @@ const pageTitle = `${d.title} — Case Study · Mohamed Ali Rafat`;
     text-decoration: underline;
   }
 
-  .badge-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-    margin-bottom: 1rem;
-  }
+  .case-meta { margin:0 0 1rem; }
 
   .case-title {
-    font-size: clamp(2rem, 4vw, 2.85rem);
-    line-height: 1.12;
-    letter-spacing: -0.025em;
+    max-width: 19ch;
+    font-size: clamp(2.7rem, 5.7vw, 5.7rem);
+    line-height: .99;
+    letter-spacing: -.065em;
+    font-weight: 600;
     margin: 0 0 0.85rem;
   }
 
@@ -180,10 +176,18 @@ const pageTitle = `${d.title} — Case Study · Mohamed Ali Rafat`;
   }
 
   .case-body-wrap {
-    padding-block: .25rem 3rem;
+    padding-block: 2rem 3rem;
+    display:grid;
+    grid-template-columns:minmax(10rem,.52fr) minmax(0,1.48fr);
+    gap:clamp(1.5rem,5vw,5rem);
   }
 
+  .contents { align-self:start; position:sticky; top:calc(var(--header-height,4rem) + 2rem); display:grid; }
+  .contents p { color:var(--ink-muted); }
+  .contents a { border-top:1px solid var(--border-subtle); padding:.7rem 0; font-size:.9rem; }
+  @media(max-width:760px) { .case-body-wrap { grid-template-columns:1fr; } .contents { position:static; } }
   .case-prose {
+    width:100%; min-width:0;
     max-width: 760px;
     margin-inline: auto;
   }
